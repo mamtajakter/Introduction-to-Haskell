@@ -1,6 +1,8 @@
 module Single where
 import Prelude
 
+-- Homework 4
+
 fun1 :: [Integer]-> Integer
 fun1 []= 1
 fun1 (x:xs)

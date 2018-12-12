@@ -1,6 +1,8 @@
 {-# LANGUAGE FlexibleInstances #-}
 module Calc where
 
+-- Homework 5
+
 import ExprT
 import Parser
 import qualified Data.Map as M

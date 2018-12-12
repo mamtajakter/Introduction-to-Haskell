@@ -1,5 +1,8 @@
 module Fibonacci where
 
+-- Homework 6
+
+
 fib :: Integer -> Integer
 fib 0=0
 fib 1=1

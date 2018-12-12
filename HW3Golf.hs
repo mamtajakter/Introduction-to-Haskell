@@ -3,6 +3,8 @@ module Golf where
 import Data.List
 import GHC.Base
 
+-- Homework 3
+
 skips :: [a]  -> [[a]]
 skips xs = reverse ( helper xs (length xs))
     where helper [] _ = [[]]

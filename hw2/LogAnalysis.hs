@@ -4,6 +4,8 @@ module LogAnalysis where
 import Log
 import Prelude
 
+-- Homework 2
+
 parseMessage :: String -> LogMessage
 parseMessage s = let  msg=(words s)
                       int1=read (msg !! 1) :: Int
