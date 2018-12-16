@@ -4,22 +4,26 @@ This README would normally document whatever steps are necessary to get your app
 
 ### What is this repository for? ###
 
-* Mastering on Haskell 
-* Doing the exercises of the undergraduate Haskell course taught by Brent Yorgey at Penn State.
-* Version 0.0.0.0
-* http://www.cis.upenn.edu/~cis194/spring13/
+* Quick summary
+* Version
+* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
 
 ### How do I get set up? ###
 
-* ghci stack
-* :load HW1.hs
+* Summary of set up
+* Configuration
+* Dependencies
+* Database configuration
+* How to run tests
+* Deployment instructions
 
 ### Contribution guidelines ###
 
-* Exercises are being done by Mamtaj
-* Code will be reviewed by Bosco
+* Writing tests
+* Code review
+* Other guidelines
 
 ### Who do I talk to? ###
 
-* Mamtaj Akter
-* Bosco Ndemeye
+* Repo owner or admin
+* Other community or team contact

@@ -1,6 +1,6 @@
 module Homework1 where
 
-
+import Data.List
 
 
 
@@ -10,35 +10,37 @@ toDigits x
          | x<=0      = []
          | otherwise = toDigits (x `div` 10) ++ [x `mod` 10]
 
+
+toDigitsRev :: Integer -> [Integer]
+toDigitsRev x
+         | x<=0      = []
+         | otherwise = [x `mod` 10] ++ toDigitsRev (x `div` 10)
+
 --2--
 doubleEveryOther:: [Integer]-> [Integer]
-doubleEveryOther xxs = reverse' (h1 (reverse' xxs))
+doubleEveryOther xxs = reverse (h1 (reverse xxs))
            where h1 :: [Integer]-> [Integer]
                  h1 []=[]
                  h1 (x:[])=[x]
                  h1 (x:y:xs)= x : (2*y) : h1 xs
 
 
-reverse' :: [Integer]-> [Integer]
-reverse' []=[]
-reverse' [x]=[x]
-reverse' (x:xs)= reverse' xs ++ [x]
+
+
+
 --3--
 
 
 sumDigits :: [Integer]-> Integer ---List to sum
 sumDigits []=0
-sumDigits (x:xs)= (digs x) + sumDigits xs
+sumDigits (x:xs)= sum (toDigits x) + sumDigits xs
 
-digs :: Integer-> Integer
-digs 0 = 0
-digs x = digs (x `div` 10) + (x `mod` 10)
 
 --4--
 
 validate:: Integer-> Bool
 validate n
-         | n `mod` 10 ==0 = True
+         | sumDigits (doubleEveryOther (toDigits n)) `mod` 10 ==0 = True
          | otherwise      = False
 
 

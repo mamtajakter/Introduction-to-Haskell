@@ -3,6 +3,8 @@ import Prelude
 
 -- Homework 4
 
+
+--1--
 fun1 :: [Integer]-> Integer
 fun1 []= 1
 fun1 (x:xs)
@@ -21,13 +23,19 @@ fun2 n
 
 
 --fun2' :: Integer-> Integer
---fun2' = sum  . filter even . iterate (\x-> x `div` 2)
+--fun2' = sum  . map (\x-> ) . iterate (\x-> x `div` 2)
 
 
 fun2' :: Integer-> Integer
 fun2' = sum . takeWhile (>1) . iterate (\x-> case (even x)  of
                              True -> x+ (x `div` 2)
                              False-> 3*x +1)
+
+
+fun22 :: Integer-> [Integer]
+fun22 x'=  take 5 $ iterate (\x->case (even x)  of
+      True -> x+ (x `div` 2)
+      False-> 3*x +1) x'
 
 
 fun2''' :: Integer-> Integer
@@ -45,6 +53,9 @@ fun2' :: Integer -> Integer
 fun2' 1 =0
 fun2' =
 -}
+
+
+--2--
 
 data Tree a = Leaf
             | Node Integer (Tree a) a (Tree a)
@@ -64,25 +75,34 @@ foldTree (x:xs)= createTree (Node 0 Leaf x Leaf) xs
                   createTree tr []=tr
                   createTree tr (t:ts) = createTree (inserts t tr) ts
 
+--3--
+
+--xor :: [Bool] -> Bool
+--xor = odd . length . filter (== True)
+
 xor :: [Bool] -> Bool
-xor = odd . length . filter (== True)
+xor xs= odd $ foldr (\x acc-> if x==True then (acc+1) else acc) 0 xs
 
-map' :: (a-> b)-> [a]->[b]
-map' f [] = []
-map' f xs= foldr (\x xs-> f x : xs) [] xs
+map' :: (a->b)-> [a]->[b]
+map' f xs= foldr (\x acc-> f x : acc) [] xs
 
-myFoldl :: (a->b->a)-> a -> [b]->a
-myFoldl f base [] = base
-myFoldl f base xs = foldr step id xs base
-                where step x g a = g (f a x)
+--3 Optional--
 
-chpr n= takeWhile (>1) (iterate (\x->x-1) n)
+myFoldl' :: (a->b->a)-> a -> [b]-> a
+myFoldl' f base xs= foldr (\x acc -> f acc x) base xs
 
-checkprime:: Integer-> Bool
-checkprime n= checkp x n
-          where x=takeWhile (>1) (iterate (\x->x-1) n)
 
-checkp [] _ = True
-checkp (x:y:xs) n
-            | n `mod` y ==0 = False
-            | otherwise     =  True && (checkp xs n)
+
+--4--
+
+sieveSundaram :: Integer-> [Integer]
+sieveSundaram n= map (\x-> 2*x +1) $ filter (\x-> x `notElem` ys) xs
+             where xs=[1..n]
+                   ys=filter (<n) [ x+y+2*x*y | x<-[1..(n+1)] , y<-[1..(n+1)] , x<=y ]
+
+
+--marked [1,2,3,4,5,6,7,8,9,10,11] [4,7,10]
+--[1,2,3,5,6,8,9,11]
+
+--cartProd 5 =[4]
+--cartProd 10= [4,7,10]

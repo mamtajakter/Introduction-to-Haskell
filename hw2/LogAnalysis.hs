@@ -6,14 +6,15 @@ import Prelude
 
 -- Homework 2
 
+--1--
+
+
 parseMessage :: String -> LogMessage
-parseMessage s = let  msg=(words s)
-                      int1=read (msg !! 1) :: Int
-                      int2= read (msg !! 2):: Int in
-                 case msg !! 0 of
-                   "E" -> LogMessage (Error int1 )  int2 (unwords (drop 3 msg))
-                   "I" -> LogMessage Info int1 (unwords (drop 3 msg))
-                   "W" -> LogMessage Warning int1 (unwords (drop 3 msg))
+parseMessage s = let  (x:y:z:msg)=(words s) in
+                 case x of
+                   "E" -> LogMessage (Error (read y::Int) )  (read z::Int) (unwords msg)
+                   "I" -> LogMessage Info (read y::Int) (unwords msg)
+                   "W" -> LogMessage Warning (read y::Int) (unwords msg)
                    _   -> Unknown s
 
 parse :: String -> [LogMessage]
@@ -22,16 +23,17 @@ parse x= parse' (lines x)
            parse'   []    = []
            parse' (y:ys) = [parseMessage y] ++ parse' ys
 
-
-
+--2--
 insert :: LogMessage -> MessageTree-> MessageTree
-insert (Unknown _) Leaf= Leaf
-insert (Unknown _) (Node l m r) = Node l m r
+insert (Unknown _) t= t
 insert lm@(LogMessage _ _ _) Leaf =  Node Leaf lm Leaf
 insert lm@(LogMessage _ ts _) (Node l mm@(LogMessage _ mts _) r)
                   | ts < mts      =Node (insert lm l) mm r
                   | ts > mts      =Node l mm (insert lm r)
                   | otherwise     = Node l lm r
+
+
+--3--
 
 build :: [LogMessage]-> MessageTree
 build []=Leaf
@@ -41,9 +43,14 @@ build (x:xs) =  createTree (Node Leaf x Leaf) xs
                   createTree tr []=tr
                   createTree tr (t:ts) = createTree (insert t tr) ts
 
+
+--4--
 inOrder:: MessageTree -> [LogMessage]
 inOrder Leaf= []
 inOrder (Node l m r)= inOrder l ++ [m] ++ inOrder r
+
+
+--5--
 
 whatWentWrong' :: [LogMessage] -> [String]
 whatWentWrong' [] = []
@@ -56,6 +63,7 @@ whatWentWrong' ((LogMessage mtype _ msg):xs)= case mtype of
 whatWentWrong :: [LogMessage] -> [String]
 whatWentWrong []=[]
 whatWentWrong xs=  whatWentWrong' (inOrder (build xs))
+
 
 --testParse parse 10 "error.log"
 --testWhatWentWrong parse whatWentWrong "sample.log"
