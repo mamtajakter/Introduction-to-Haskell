@@ -1,6 +1,7 @@
 module Single where
-import Prelude
 
+
+import Data.List
 -- Homework 4
 
 
@@ -22,37 +23,11 @@ fun2 n
      | otherwise = fun2 (3*n + 1)
 
 
---fun2' :: Integer-> Integer
---fun2' = sum  . map (\x-> ) . iterate (\x-> x `div` 2)
-
-
 fun2' :: Integer-> Integer
-fun2' = sum . takeWhile (>1) . iterate (\x-> case (even x)  of
-                             True -> x+ (x `div` 2)
-                             False-> 3*x +1)
+fun2' = sum . filter even .takeWhile (>1) . iterate (\x-> case (even x)  of
+                                              True ->  (x `div` 2)
+                                              False-> 3*x +1)
 
-
-fun22 :: Integer-> [Integer]
-fun22 x'=  take 5 $ iterate (\x->case (even x)  of
-      True -> x+ (x `div` 2)
-      False-> 3*x +1) x'
-
-
-fun2''' :: Integer-> Integer
-fun2''' = sum . takeWhile (>1) . iterate (\x-> case (even x) of
-                                                True ->  x `div` 2
-                                                False-> 3* x +1)
-
-
-fun2'' :: [Integer]-> Integer
-fun2'' = product . map (\x -> x-2) . filter even
-
-
-{-
-fun2' :: Integer -> Integer
-fun2' 1 =0
-fun2' =
--}
 
 
 --2--
@@ -98,11 +73,21 @@ myFoldl' f base xs= foldr (\x acc -> f acc x) base xs
 sieveSundaram :: Integer-> [Integer]
 sieveSundaram n= map (\x-> 2*x +1) $ filter (\x-> x `notElem` ys) xs
              where xs=[1..n]
-                   ys=filter (<n) [ x+y+2*x*y | x<-[1..(n+1)] , y<-[1..(n+1)] , x<=y ]
+                   ys=filter (<n) [ x+y+2*x*y | x<-[1..n] , y<-[1..n] , x<=y ]
 
 
---marked [1,2,3,4,5,6,7,8,9,10,11] [4,7,10]
---[1,2,3,5,6,8,9,11]
+cartProd :: Integer -> [Integer]
+{- The sequence to be excluded from the [1..n] list later.
+   1 <= i <= j and i + j + 2ij <= n. -}
+cartProd n = filter (<= n) $ [i + j + 2*i*j | j <- [1..n], i <- [1..j]]
+
+
+sieveSundaram' :: Integer -> [Integer]
+{- The sieve that generates odd primes less than 2n + 2. -}
+sieveSundaram' n = (map ((+1) . (2*) . head) . filter (\x -> length x == 1) .
+                   group . sort . ([1..n] ++) . cartProd) n
+
 
 --cartProd 5 =[4]
 --cartProd 10= [4,7,10]
+-- [1,2,3,4,5,6,7,8,9,10] ++ [4,7,10]
