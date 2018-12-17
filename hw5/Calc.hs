@@ -104,6 +104,7 @@ instance Expr Program where
 -}
 
 --6-- I am stuck again, dont understand how to write  instance of function
+
 class HasVars a where
     var :: String-> a
 
@@ -123,6 +124,7 @@ instance Expr VarExprT where
 
 instance HasVars VarExprT where
    var s= Var s
+{-
 
 instance Expr  (M.Map String Integer-> Maybe Integer) where
    lit x = f (M.Map s x)
@@ -130,8 +132,11 @@ instance Expr  (M.Map String Integer-> Maybe Integer) where
 instance HasVars  (M.Map String Integer-> Maybe Integer) where
    var x = M.lookup x
 
-
+-}
 {-
+
+a little example code of Map
+
 type Name =String
 type PhoneNum= String
 type PhoneBook =M.Map Name PhoneNum
