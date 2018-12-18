@@ -1,8 +1,5 @@
 module Lecture7 where
 
-
-import Data.Monoid
-
 data Tree a = Empty
             | Node (Tree a) a (Tree a)
       deriving (Show, Eq)
@@ -26,15 +23,6 @@ treeDepth :: Tree a-> Integer
 treeDepth Empty=0
 treeDepth (Node l x r)= 1+ max (treeDepth l) (treeDepth r)
 
-
-treeDepth'' :: Tree a-> Integer
-treeDepth'' Empty=0
-treeDepth'' (Node l x r)
-            | a>b = a
-            | otherwise = b
-        where
-             a=treeDepth'' l + 1
-             b=1+ treeDepth'' r
 
 
 flatten :: Tree a-> [a]
@@ -61,7 +49,7 @@ treeDepth' = treeFold 0 (\l x r -> 1 + max l r)
 flatten' :: Tree a -> [a]
 flatten' = treeFold [] (\l x r -> l ++  [x] ++ r)
 
-
+-- doesnt work
 treeMax :: ( Ord a, Bounded a)=>  Tree a -> a
 treeMax  = treeFold minBound (\l x r-> l `max` x `max` r)
 
@@ -84,7 +72,6 @@ exprTFold f g h (Mul e1 e2)= h (exprTFold f g h e1)  (exprTFold f g h e2)
 eval2 :: ExprT-> Integer
 eval2= exprTFold id (+) (*)
 
-
 numLiterals :: ExprT-> Int
 numLiterals= exprTFold (const 1) (+) (+)
 
@@ -95,7 +82,7 @@ newtype Sum a= Sum a
 
 getSum :: Sum a -> a
 getSum (Sum a)= a
-
+{-
 instance Num a => Monoid (Sum a) where
     mempty = Sum 0
     mappend = (+)
@@ -115,3 +102,4 @@ lst = [1,5,8,23, 423, 99]
 
 prod :: Integer
 prod = getProduct . mconcat . map Product $ lst
+-}

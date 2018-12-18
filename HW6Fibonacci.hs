@@ -3,6 +3,8 @@
 
 module Fibonacci where
 
+
+import Data.List
 -- Homework 6
 
 --1--
@@ -17,7 +19,7 @@ fibs1 =  map fib [0..]
 --2--found in stack overflow
 
 fibs2 :: [Integer]
-fibs2 = 0 : 1 : 1 : zipWith (+) fibs2 (tail fibs2)
+fibs2 = 0 : 1 :  zipWith (+) fibs2 (tail fibs2)
 
 --3-- (streamToList 1) gives error :(
 data Stream a= Cons a (Stream a)
@@ -27,8 +29,10 @@ streamToList (Cons x y)= x : streamToList y
 
 --ListOfTwentyStream= take 20 (streamToList s)
 
+
+
 instance Show a => Show (Stream a) where
-          show = show . take 20 . streamToList
+          show = foldr (\x acc-> show x ++ ", " ++ acc ) "" . map show . take 20 . streamToList
 
 
 --4--
@@ -46,13 +50,24 @@ streamFromSeed f x = Cons x (streamFromSeed f (f x))
 --5--
 
 nats :: Stream Integer
-nats = Cons 0 (streamInfinite 1)
+nats = streamFromSeed succ 0
 
-streamInfinite :: Integer -> Stream Integer
-streamInfinite x= Cons x (streamInfinite (x+1))
 
---ruler :: Stream Integer
---ruler
+-- First version with divisibility tests
+ruler0 :: Stream Integer
+ruler0 = streamMap (\n -> rulerValue n (floor (log2 n))) $
+         streamFromSeed succ 1
+
+log2 :: Integer -> Float
+log2 n = log (fromInteger n) / log 2
+
+divides :: Integer -> Integer -> Bool
+divides n m = m `mod` n == 0
+
+rulerValue :: Integer -> Integer -> Integer
+rulerValue n power = if (2^power) `divides` n
+                     then power
+                     else rulerValue n (pred power)
 
 --6--
 

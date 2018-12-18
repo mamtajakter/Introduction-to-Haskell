@@ -1,13 +1,14 @@
-{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FlexibleInstances, TypeSynonymInstances #-}
+{-# OPTIONS_GHC -Wall #-}
+
 module Calc where
 
 -- Homework 5
 
 import ExprT
 import Parser
-import StackVM
 import qualified Data.Map as M
-
+import qualified StackVM as S
 
 
 --1--
@@ -90,18 +91,19 @@ testMM = testExp :: Maybe MinMax
 testSat = testExp :: Maybe Mod7
 --testInteger = parseExp lit add mul "(3 * 4) + 5"
 
---5-- i  dont understand how to create instance of [stackExp], so I gave it up
-
---newtype Program = Program { unString16 :: [Word16] }
-{-
-instance Expr Program where
-   lit x = (PushI x) :[]
-   add (PushI a) (PushI b)= PushB (a+b) :[]
-   mul (PushI a) (PushI b)= PushB (a*b) :[]
+--5--
 
 
---compile:: String-> Maybe Program
--}
+
+instance Expr S.Program where
+   lit x = [S.PushI x]
+   add a b =  a ++ b ++ [S.Add]
+   mul a b = a ++ b ++ [S.Mul]
+
+
+
+compile :: String -> Maybe S.Program
+compile  =  parseExp lit add mul
 
 --6-- I am stuck again, dont understand how to write  instance of function
 
@@ -124,13 +126,22 @@ instance Expr VarExprT where
 
 instance HasVars VarExprT where
    var s= Var s
-{-
 
-instance Expr  (M.Map String Integer-> Maybe Integer) where
-   lit x = f (M.Map s x)
 
 instance HasVars  (M.Map String Integer-> Maybe Integer) where
    var x = M.lookup x
+
+
+
+{-
+
+
+
+instance Expr  (M.Map String Integer-> Maybe Integer) where
+   lit x = M.lookup (show x)
+   add x y= M.lookup (show (eval (Add x y)))
+   mul x y= M.lookup (show (eval (Mul x y)))
+
 
 -}
 {-
