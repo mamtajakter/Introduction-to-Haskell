@@ -1,4 +1,4 @@
-Update: 1-6, except 5.6,6.3,6.5,6.6,6.7, I dont understand 7
+Update: 1-6, except 6.3,6.5,6.6,6.7, I dont understand 7
 
 # README #
 

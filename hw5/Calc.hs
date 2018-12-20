@@ -131,19 +131,24 @@ instance HasVars VarExprT where
 instance HasVars  (M.Map String Integer-> Maybe Integer) where
    var x = M.lookup x
 
+instance Expr (M.Map String Integer-> Maybe Integer) where
+   lit x = \_-> Just x
+   add x y= \a -> case (x a ) of
+                   Nothing ->  case (y a) of
+                         Nothing -> Nothing
+                         Just m  -> Just m
+                   Just n  -> case (y a) of
+                         Nothing -> Just n
+                         Just m  -> Just (m+n)
+   mul x y = \a -> case (x a ) of
+                   Nothing ->  case (y a) of
+                         Nothing -> Nothing
+                         Just m  -> Just m
+                   Just n  -> case (y a) of
+                         Nothing -> Just n
+                         Just m  -> Just (m*n)
 
 
-{-
-
-
-
-instance Expr  (M.Map String Integer-> Maybe Integer) where
-   lit x = M.lookup (show x)
-   add x y= M.lookup (show (eval (Add x y)))
-   mul x y= M.lookup (show (eval (Mul x y)))
-
-
--}
 {-
 
 a little example code of Map

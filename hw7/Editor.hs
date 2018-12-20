@@ -1,5 +1,7 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving
            , ScopedTypeVariables
+           , FlexibleInstances
+           , TypeSynonymInstances
    #-}
 module Editor where
 
@@ -144,3 +146,8 @@ modCurLine f = do
   l  <- getCurLine
   nl <- onBuffer numLines
   setCurLine . max 0 . min (nl - 1) $ f l
+
+
+instance Applicative (Editor b) where
+    pure = return
+    (<*>) = ap
