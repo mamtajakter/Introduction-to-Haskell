@@ -1,4 +1,5 @@
-Update: 1-6, except 6.3,6.5,6.6,6.7, I dont understand 7
+# Update: #
+ * 1-6 are done,  7 and 8 gives error on Monoid subgroup :(
 
 # README #
 
