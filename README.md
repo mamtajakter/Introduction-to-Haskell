@@ -29,3 +29,22 @@ This README would normally document whatever steps are necessary to get your app
 
 * Repo owner or admin
 * Other community or team contact
+
+### Ways to compile haskell code:
+
+* if you run the program on the fly:
+  runhaskell helloworld.hs
+  To feed a text file:
+  cat haiku.txt | runhaskell helloworld.hs
+
+
+* if you want to run with stack:
+  ghci stack
+  :load helloworld.hs
+  main
+
+* if the file does not have a module name: --preferred one
+  ghc --make helloworld
+  ./helloworld
+  To feed a text file to the Haskell executable:
+  cat haiku.txt | ./helloworld
