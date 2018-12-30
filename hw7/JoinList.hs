@@ -4,14 +4,22 @@
 
 module JoinList where
 
-
+--import Test.QuickCheck
 import Data.Monoid
 import Sized
-import Test.QuickCheck
 import Scrabble
 import Buffer
 import Editor
 
+testList1 :: JoinList Size String
+testList1 = (Append (Size 4)
+             (Append (Size 2)
+              (Single (Size 1) "moon")
+              (Single (Size 1) "planet"))
+             (Append (Size 2)
+              (Single (Size 1) "star")
+              (Single (Size 1) "galaxy")))
+--1--
 
 data JoinList m a = Empty
                   | Single m a
@@ -22,11 +30,31 @@ data JoinList m a = Empty
 (+++):: Monoid m => JoinList m a-> JoinList m a-> JoinList m a
 Empty +++ x = x
 x +++ Empty = x
-a@(Single a1 c1) +++ b@(Single a2 c2) = Append (a1 `mappend` a2) (Single a1 c1 ) (Single a2 c2)
-a@(Single a1 c1) +++ b@(Append p l r) = Append (a1 `mappend` p) a b
-a@(Append p l r)  +++ b@(Single a1 c1)  = Append (p `mappend` a1) a b
-a@(Append p1 l1 r1)  +++ b@(Append p2 l2 r2)  = Append (p1 `mappend` p2) a b
+a +++ b = Append ((tag a) `mappend` (tag b)) a b
 
+
+tag :: Monoid m=> JoinList m a-> m
+tag (Single x _)= x
+tag (Append x _ _)= x
+
+
+--2.1
+
+
+indexJ :: (Sized b, Monoid b) => Int -> JoinList b a -> Maybe a
+indexJ x _ | x<0            = Nothing
+indexJ x Empty              = Nothing
+indexJ x jl | x>=tagSize jl = Nothing
+indexJ x (Single y z)
+       | x==0               = Just z
+       | otherwise          = Nothing
+indexJ x jl@(Append y l r)
+       | x < tagSize l = indexJ x l
+       | otherwise     = indexJ (x- tagSize l) r
+
+
+tagSize :: (Sized b, Monoid b) => JoinList b a -> Int
+tagSize = getSize . size . tag
 
 (!!?) :: [a] -> Int -> Maybe a
 [] !!? _ = Nothing
@@ -39,7 +67,91 @@ jlToList Empty = []
 jlToList (Single _ a) = [a]
 jlToList (Append _ l1 l2) = jlToList l1 ++ jlToList l2
 
-{-
-indexJ :: (Sized b, Monoid b) => Int -> JoinList b a -> Maybe a
-indexJ x y= (jlToList y) !!? x
--}
+
+testIndexJ:: Int -> Bool
+testIndexJ i= (indexJ i testList1) == (jlToList testList1 !!? i)
+
+--2.2
+
+
+
+dropJ :: (Sized b, Monoid b) => Int -> JoinList b a -> JoinList b a
+dropJ n jl | n<0            = error "Number cant be negative"
+dropJ n jl | n==0           = jl
+dropJ _ Empty               = Empty
+dropJ n jl | n==tagSize jl  = Empty
+dropJ n jl | n>tagSize jl   = error "Insufficient elements in JoinList"
+dropJ n jl@(Single y z)     = Empty
+dropJ n jl@(Append x l r)
+       | n== tagSize l      = r
+       | n < tagSize l      = dropJ n l
+       | otherwise          = dropJ (n- tagSize l) r
+
+
+testDropJ :: Int-> Bool
+testDropJ n= jlToList (dropJ n testList1) == drop n (jlToList testList1)
+
+--2.3
+takeJ :: (Sized b, Monoid b) => Int -> JoinList b a -> JoinList b a
+takeJ n jl | n<=0            = error "Number cant be negative"
+takeJ _ Empty                = Empty
+takeJ n jl | n==tagSize jl   = jl
+takeJ n jl | n>tagSize jl = error "Insufficient elements in JoinList"
+takeJ n jl@(Single y z)= jl
+takeJ n jl@(Append x l r)
+       | n== tagSize l = l
+       | n < tagSize l = takeJ n l
+       | otherwise     = takeJ (n- tagSize l) r
+
+
+testTakeJ :: Int-> Bool
+testTakeJ n= jlToList (takeJ n testList1) == take n (jlToList testList1)
+
+
+--3
+scoreLine :: String-> JoinList Score String
+scoreLine "" = Empty
+scoreLine x  = Single (scoreString x) x
+
+--4
+
+scoreSizeLine :: String-> JoinList (Score, Size) String
+scoreSizeLine "" = Empty
+scoreSizeLine x  = Single (scoreString x, Size 1) x
+
+tagScore ::  JoinList (Score, Size) String -> Int
+tagScore jl     = getScore (fst (tag jl))
+
+instance Buffer (JoinList (Score, Size) String) where
+      toString jl = unlines (jlToList jl)
+
+      fromString xs = fromLines (lines xs)
+             where fromLines [] = Empty
+                   fromLines (x:[]) = scoreSizeLine x
+                   fromLines ful@(x:xs)= fromLines (take half ful) +++ fromLines (drop half ful)
+                                     where half = (length ful) `div` 2
+
+      line= indexJ
+
+      replaceLine x _ jl | x<0            = jl
+      replaceLine x _ Empty               = Empty
+      replaceLine x _ jl | x>=tagSize jl  = jl
+      replaceLine x s l@(Single y z)
+             | x==0               = scoreSizeLine s
+             | otherwise          = l
+      replaceLine x s jl@(Append y l r)
+             | x < tagSize l = replaceLine x s l
+             | otherwise     = replaceLine (x- tagSize l) s r
+
+      numLines =tagSize
+      value = tagScore
+
+main = runEditor editor $ newBuf
+
+newBuf :: JoinList (Score, Size) String
+newBuf = fromString $ unlines
+         [ "This buffer is for poems you want to discard,"
+         , "and for tinkering with steam valve coefficients."
+         , "To load a different file, type the character 'l'"
+         , "followed by the name of the file."
+         ]
