@@ -1,5 +1,7 @@
 # Update: #
- * 1-6 are done,  7 and 8 gives error on Monoid subgroup :(
+ * 1-8 are done 
+ * couldnt figure out how to use QuickCheck in 7  
+ * didnt understand the treeFold function in 8
 
 # README #
 

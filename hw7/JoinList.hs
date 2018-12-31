@@ -73,8 +73,6 @@ testIndexJ i= (indexJ i testList1) == (jlToList testList1 !!? i)
 
 --2.2
 
-
-
 dropJ :: (Sized b, Monoid b) => Int -> JoinList b a -> JoinList b a
 dropJ n jl | n<0            = error "Number cant be negative"
 dropJ n jl | n==0           = jl
@@ -83,8 +81,7 @@ dropJ n jl | n==tagSize jl  = Empty
 dropJ n jl | n>tagSize jl   = error "Insufficient elements in JoinList"
 dropJ n jl@(Single y z)     = Empty
 dropJ n jl@(Append x l r)
-       | n== tagSize l      = r
-       | n < tagSize l      = dropJ n l
+       | n <= tagSize l      = dropJ n l +++ r
        | otherwise          = dropJ (n- tagSize l) r
 
 
@@ -93,15 +90,15 @@ testDropJ n= jlToList (dropJ n testList1) == drop n (jlToList testList1)
 
 --2.3
 takeJ :: (Sized b, Monoid b) => Int -> JoinList b a -> JoinList b a
-takeJ n jl | n<=0            = error "Number cant be negative"
+takeJ n jl | n<0            = error "Number cant be negative"
+takeJ n jl | n==0            = Empty
 takeJ _ Empty                = Empty
 takeJ n jl | n==tagSize jl   = jl
 takeJ n jl | n>tagSize jl = error "Insufficient elements in JoinList"
 takeJ n jl@(Single y z)= jl
 takeJ n jl@(Append x l r)
-       | n== tagSize l = l
-       | n < tagSize l = takeJ n l
-       | otherwise     = takeJ (n- tagSize l) r
+       | n <= tagSize l =  takeJ n l
+       | otherwise     = l +++ takeJ (n- tagSize l) r
 
 
 testTakeJ :: Int-> Bool
@@ -136,12 +133,7 @@ instance Buffer (JoinList (Score, Size) String) where
       replaceLine x _ jl | x<0            = jl
       replaceLine x _ Empty               = Empty
       replaceLine x _ jl | x>=tagSize jl  = jl
-      replaceLine x s l@(Single y z)
-             | x==0               = scoreSizeLine s
-             | otherwise          = l
-      replaceLine x s jl@(Append y l r)
-             | x < tagSize l = replaceLine x s l
-             | otherwise     = replaceLine (x- tagSize l) s r
+      replaceLine x s jl= takeJ x jl +++ scoreSizeLine s +++ dropJ (x+1) jl
 
       numLines =tagSize
       value = tagScore
