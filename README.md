@@ -1,5 +1,5 @@
 # Update: #
- * 1-8 are done 
+ * 1-10 are done 
  * couldnt figure out how to use QuickCheck in 7  
  * didnt understand the treeFold function in 8
 

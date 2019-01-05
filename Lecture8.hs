@@ -204,4 +204,6 @@ main26 = do
 main27 = putStrLn "Hello" >> putStrLn "World"
 
 
-main= (putStrLn "Give a number" >> readLn ) >>= (\n-> putStrLn (show (n+1)))
+--main = putStrLn "Hello" >> putStrLn "world!"
+main :: IO ()
+main = (return "hello" >> return "world") >>= putStrLn
