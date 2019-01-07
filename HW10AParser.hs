@@ -66,7 +66,7 @@ sequenceA'' xs= foldr (liftA2 (:)) (pure []) xs
 --1
 
 first :: (a->b)-> (a,c)-> (b,c)
-first f p@(x,y)= (f x, y)
+first f (x,y)= (f x, y)
 
 instance Functor Parser where
        fmap f p = Parser (\s-> case runParser p s of
@@ -110,6 +110,8 @@ intPair = (\x _ y -> [x,y]) <$> posInt <*> char ' ' <*> posInt
 instance Alternative Parser where
        empty = Parser (\s-> Nothing)
        p1 <|> p2 = Parser (\s -> runParser p1 s <|> runParser p2 s)
+
+       
 {-     p1 <|> p2 = Parser ( \s -> case runParser p1 s of
          Nothing -> case (runParser p2 s) of
                  Nothing-> Nothing
